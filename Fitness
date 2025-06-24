@@ -1,0 +1,69 @@
+"""Simple fitness calculator for women.
+
+This script calculates the daily calorie intake needed to achieve different goals
+based on body weight, age and activity level. It supports the goals of
+maintaining weight, losing weight, gaining weight and body recomposition.
+
+The calculator uses a simplified BMR formula that only depends on weight and
+assumes an average height. Activity multipliers are based on common guidelines.
+This is not medical advice; consult a professional for personalized
+recommendations.
+"""
+
+
+def get_activity_multiplier(level: str) -> float:
+    """Return activity multiplier based on activity level."""
+    level = level.lower()
+    if level in {"sedentary", "1"}:
+        return 1.2
+    elif level in {"light", "lightly active", "2"}:
+        return 1.375
+    elif level in {"moderate", "moderately active", "3"}:
+        return 1.55
+    elif level in {"very", "very active", "4"}:
+        return 1.725
+    elif level in {"extra", "extra active", "5"}:
+        return 1.9
+    else:
+        raise ValueError("Unknown activity level")
+
+
+def calculate_calories(weight_kg: float, age: int, activity_multiplier: float,
+                       goal: str) -> float:
+    """Calculate daily calories for the given goal."""
+    # Simple BMR approximation: 21.6 * weight in kg
+    bmr = 21.6 * weight_kg
+    tdee = bmr * activity_multiplier
+
+    goal = goal.lower()
+    if goal in {"maintain", "maintenance"}:
+        return tdee
+    elif goal in {"lose", "weight loss", "cut"}:
+        return tdee - 500
+    elif goal in {"gain", "bulk"}:
+        return tdee + 500
+    elif goal in {"recomp", "recomposition"}:
+        return tdee
+    else:
+        raise ValueError("Unknown goal")
+
+
+def main():
+    weight = float(input("Enter your weight in kg: "))
+    age = int(input("Enter your age: "))
+    print("Activity levels:\n"
+          "1. Sedentary\n"
+          "2. Lightly active\n"
+          "3. Moderately active\n"
+          "4. Very active\n"
+          "5. Extra active")
+    activity_level = input("Choose your activity level (1-5 or description): ")
+    goal = input("Goal (maintain/lose/gain/recomposition): ")
+
+    multiplier = get_activity_multiplier(activity_level)
+    calories = calculate_calories(weight, age, multiplier, goal)
+    print(f"Daily calories to {goal}: {calories:.0f}")
+
+
+if __name__ == "__main__":
+    main()
